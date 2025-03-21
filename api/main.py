@@ -20,7 +20,7 @@ Base.metadata.create_all(bind=engine)
 
 # Configuration de l'application FastAPI
 app = FastAPI(
-    title="Art Home API",
+    title="Art@Home API",
     description="API pour la gestion d'une galerie d'art en ligne",
     version="1.0.0"
 )

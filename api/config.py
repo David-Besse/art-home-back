@@ -10,6 +10,6 @@ load_dotenv()
 
 class Settings(BaseSettings):
     secret_key: str = os.getenv("SECRET_KEY")
-    database_url: str = os.getenv("DATABASE_URL")
+    database_url: str = os.getenv("DATABASE_POSTGRES_URL")
 
 settings = Settings()
