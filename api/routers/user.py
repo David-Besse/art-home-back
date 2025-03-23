@@ -31,13 +31,16 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email déjà utilisé")
         
     hashed_password = get_password_hash(user.password)
+    
+    # Utiliser model_dump pour extraire tous les champs du schéma UserCreate
+    # en excluant le mot de passe qui sera ajouté séparément après hachage
+    user_data = user.model_dump(exclude={"password"})
+    
     new_user = user_model.User(
-        email=user.email,
-        password=hashed_password,
-        lastname=user.lastname,
-        firstname=user.firstname,
-        roles=user.roles,
+        **user_data,
+        password=hashed_password
     )
+    
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
