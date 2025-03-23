@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import user_model
 from ..schemas import Token
+from ..schemas.token import TokenRequest
 from ..security import (
     create_access_token, 
     create_refresh_token, 
@@ -33,6 +34,12 @@ def login_for_access_token(
     """
     Endpoint de connexion qui retourne un token d'accès et un token de rafraîchissement.
     """
+    # Vérification que le grant_type est bien "password" (requis par OAuth2)
+    if not form_data.grant_type:
+        form_data.grant_type = "password"
+    elif form_data.grant_type != "password":
+        raise HTTPException(status_code=400, detail="Le grant_type doit être 'password'")
+        
     user = db.query(user_model.User).filter(user_model.User.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect")
@@ -88,3 +95,35 @@ def refresh_access_token(
     )
 
     return Token(access_token=access_token, refresh_token=new_refresh_token, token_type="bearer")
+
+
+@router.post(
+    "/login", 
+    response_model=Token, 
+    summary="Connexion avec un schéma personnalisé",
+    description="Authentifie un utilisateur avec un schéma personnalisé et retourne un token d'accès et un token de rafraîchissement."
+)
+def login(
+    response: Response,
+    login_data: TokenRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Endpoint de connexion alternatif qui utilise un schéma personnalisé au lieu de OAuth2PasswordRequestForm.
+    """
+    user = db.query(user_model.User).filter(user_model.User.email == login_data.username).first()
+    if not user or not verify_password(login_data.password, user.password):
+        raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect")
+
+    access_token = create_access_token(data={"sub": user.email})
+    refresh_token = create_refresh_token(data={"sub": user.email})
+
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=True,
+        max_age=60 * 60 * 24 * 7
+    )
+
+    return Token(access_token=access_token, refresh_token=refresh_token, token_type="bearer")

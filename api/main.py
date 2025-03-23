@@ -75,7 +75,8 @@ async def auth_middleware(request: Request, call_next):
     """
     # Liste des chemins exemptés de l'authentification
     exempt_paths = [
-        "/api/auth/token",                # Login
+        "/api/auth/token",                # Login avec OAuth2
+        "/api/auth/login",                # Login avec schéma personnalisé
         "/api/auth/token/refresh",        # Rafraîchissement du token
         "/api/users/new",                 # Inscription
         "/api/artworks",                  # Liste des œuvres d'art
