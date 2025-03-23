@@ -49,6 +49,7 @@ async def auth_middleware(request: Request, call_next):
         "/api/artworks",                  # Liste des œuvres d'art
         "/api/contacts",                  # Création d'un message de contact
         "/api/legal-notices",             # Récupération des mentions légales
+        "/api/exhibitions",               # Liste des expositions
         "/docs",                          # Documentation OpenAPI
         "/redoc",                         # Documentation ReDoc
         "/openapi.json",                  # Schéma OpenAPI

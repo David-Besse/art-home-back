@@ -10,7 +10,18 @@ from ..models import exhibition_model, user_model
 from ..schemas import Exhibition, ExhibitionCreate, ExhibitionUpdate, Artwork
 from ..dependencies import get_current_user
 
-router = APIRouter(prefix="/api/secure/exhibitions", tags=["Expositions"])
+router = APIRouter(prefix="/api/exhibitions", tags=["Expositions"])
+
+@router.get("/", 
+           response_model=List[Exhibition],
+           summary="Récupérer toutes les expositions",
+           description="Récupère toutes les expositions disponibles")
+def get_exhibitions(db: Session = Depends(get_db)):
+    """
+    Récupère toutes les expositions disponibles.
+    """
+    exhibitions = db.query(exhibition_model.Exhibition).all()
+    return exhibitions
 
 @router.post("/", 
              response_model=Exhibition,
