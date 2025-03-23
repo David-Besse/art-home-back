@@ -3,6 +3,7 @@ Module principal définissant l'application FastAPI et incluant les routeurs pou
 """
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
 from .routers import (
     user_router, 
@@ -18,11 +19,42 @@ from .security import decode_token
 # Création des tables dans la base de données
 Base.metadata.create_all(bind=engine)
 
+
 # Configuration de l'application FastAPI
 app = FastAPI(
     title="Art@Home API",
     description="API pour la gestion d'une galerie d'art en ligne",
     version="1.0.0"
+)
+
+# Configuration CORS
+origins = [
+    "https://arthome-gallery.vercel.app",
+    "http://localhost:8080",
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=[
+        "Content-Type", 
+        "Authorization", 
+        "Accept", 
+        "Origin", 
+        "X-Requested-With",
+        "X-CSRF-Token", 
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers"
+    ],
+    expose_headers=[
+        "Content-Length", 
+        "Content-Type", 
+        "X-Total-Count"  # Utile pour la pagination
+    ],
+    max_age=86400,  # Cache des pré-requêtes OPTIONS pendant 24 heures (en secondes)
 )
 
 # Inclusion des différents routeurs
