@@ -51,7 +51,9 @@ async def auth_middleware(request: Request, call_next):
         "/api/legal-notices",             # Récupération des mentions légales
         "/docs",                          # Documentation OpenAPI
         "/redoc",                         # Documentation ReDoc
-        "/openapi.json"                   # Schéma OpenAPI
+        "/openapi.json",                  # Schéma OpenAPI
+        "/",                              # Racine
+        "/favicon.ico"                    # Favicon
     ]
     
     # Vérifier si le chemin est exempté

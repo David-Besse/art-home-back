@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .config import settings
 
-DATABASE_URL = settings.database_url
+DATABASE_URL = settings.database_url.replace('postgres://', 'postgresql://')
 
 engine = create_engine(
     DATABASE_URL,
