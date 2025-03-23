@@ -34,15 +34,9 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     new_user = user_model.User(
         email=user.email,
         password=hashed_password,
-        firstname=user.firstname,
         lastname=user.lastname,
-        nickname=user.nickname,
-        date_of_birth=user.date_of_birth,
-        presentation=user.presentation,
+        firstname=user.firstname,
         roles=user.roles,
-        avatar=user.avatar,
-        status=user.status,
-        slug=user.slug
     )
     db.add(new_user)
     db.commit()
